@@ -1,19 +1,23 @@
 // Dewan Lab Valve Tester
 // Teensy 2.0 sketch to power the Dewan Lab solenoid valve tester
 // Austin Pauley, Dewan Lab, Florida State University, 2024
-// v1.0
+// v2.0
 
-const int valve_pulse_time_ms = 1000;
-const int debounce_time_ms = 15;
+const int VALVE_PULSE_TIME_MS = 1000;
+const int DEBOUNCE_TIME_MS = 15;
 const int LED = 11;
-const int switch1 = 4;
+const int SWITCH1 = 4;
 const int buttons[4] = {3, 2, 1, 0};
 const int valves[4] = {8, 7, 6, 5};
 
+
+int switch_state = 0;
+uint16_t pin_states[4] = {0, 0 , 0, 0};
 int button_states[4] = {0, 0, 0, 0};
 int prev_button_states[4] = {0, 0, 0, 0};
-int button_latched[4] = {0, 0, 0 , 0};
-int switch_state = 0;
+int button_latched[4] = {0, 0, 0, 0};
+uint16_t db_starts[4] = {0, 0, 0, 0};
+
 
 
 void setup() {
@@ -24,23 +28,23 @@ void setup() {
     pinMode(valves[i], OUTPUT);
   }
 
-  pinMode(switch1, INPUT);
+  pinMode(SWITCH1, INPUT);
   pinMode(LED, OUTPUT);
 }
 
 void loop() {
 
-  while(digitalRead(switch1) == HIGH) {
-      digitalWrite(LED, HIGH);
+  while(digitalRead(SWITCH1) == HIGH) {
+      digitalWrite(LED, HIGH); // Loop mode on
       for(int i = 0; i < 4; i++) {
         if(digitalRead(SWITCH1) == LOW)
           break;
         
-        pulse_valve(valves[i], valve_pulse_time_ms);
+        pulse_valve(valves[i], VALVE_PULSE_TIME_MS);
       }     
     }
 
-      digitalWrite(LED, LOW);
+      digitalWrite(LED, LOW); // Loop mode off
 
       int b1_state = digitalRead(BUTTON1);
       int b2_state = digitalRead(BUTTON2); 
