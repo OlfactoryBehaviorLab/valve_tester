@@ -23,7 +23,7 @@ uint16_t db_starts[4] = {0, 0, 0, 0};
 void setup() {
   Serial.begin(11520); // For Debug
 
-  for(int i = 0; i <= 4; i++) {
+  for(int i = 0; i < 4; i++) {
     pinMode(buttons[i], INPUT);
     pinMode(valves[i], OUTPUT);
   }
