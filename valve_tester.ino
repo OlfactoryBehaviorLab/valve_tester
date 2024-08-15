@@ -3,49 +3,40 @@
 // Austin Pauley, Dewan Lab, Florida State University, 2024
 // v1.0
 
-#define SWITCH1 4
-#define BUTTON1 3
-#define BUTTON2 2
-#define BUTTON3 1
-#define BUTTON4 0
+const int valve_pulse_time_ms = 1000;
+const int debounce_time_ms = 15;
+const int LED = 11;
+const int switch1 = 4;
+const int buttons[4] = {3, 2, 1, 0};
+const int valves[4] = {8, 7, 6, 5};
 
-#define VALVE1 8
-#define VALVE2 7
-#define VALVE3 6
-#define VALVE4 5
+int button_states[4] = {0, 0, 0, 0};
+int prev_button_states[4] = {0, 0, 0, 0};
+int button_latched[4] = {0, 0, 0 , 0};
+int switch_state = 0;
 
-int valves[4] = {8, 7, 6, 5};
 
-#define LED 11
+void setup() {
+  Serial.begin(11520); // For Debug
 
-void setup()
-{
-  Serial.begin(11520);
-  pinMode(SWITCH1, INPUT);
-  pinMode(BUTTON1, INPUT);
-  pinMode(BUTTON2, INPUT);
-  pinMode(BUTTON3, INPUT);
-  pinMode(BUTTON4, INPUT);
+  for(int i = 0; i <= 4; i++) {
+    pinMode(buttons[i], INPUT);
+    pinMode(valves[i], OUTPUT);
+  }
 
-  pinMode(VALVE1, OUTPUT);
-  pinMode(VALVE2, OUTPUT);
-  pinMode(VALVE3, OUTPUT);
-  pinMode(VALVE4, OUTPUT);
+  pinMode(switch1, INPUT);
   pinMode(LED, OUTPUT);
 }
 
-void loop()
-{
+void loop() {
 
-  while(digitalRead(SWITCH1) == HIGH)
-    {
+  while(digitalRead(switch1) == HIGH) {
       digitalWrite(LED, HIGH);
-      for(int i = 0; i < 4; i++)
-      {
+      for(int i = 0; i < 4; i++) {
         if(digitalRead(SWITCH1) == LOW)
           break;
         
-        pulse_valve(valves[i], 1000);
+        pulse_valve(valves[i], valve_pulse_time_ms);
       }     
     }
 
@@ -57,18 +48,21 @@ void loop()
       int b4_state = digitalRead(BUTTON4);
 
 
-      digitalWrite(VALVE1, b1_state);
-      digitalWrite(VALVE2, b2_state);
-      digitalWrite(VALVE3, b3_state);
-      digitalWrite(VALVE4, b4_state);
+      for(int v = 0; v < 4, v++){
+        digitalWrite(valve[v], button_latched[v])
+      }
     
 
 }
 
-void pulse_valve(int valve, int time)
-{
+void pulse_valve(int valve, int time) {
   digitalWrite(valve, HIGH);
   delay(time);
   digitalWrite(valve, LOW);
   delay(time);
+}
+
+void debounce_button(int button_num) {
+
+
 }
