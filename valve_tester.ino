@@ -46,15 +46,12 @@ void loop() {
 
       digitalWrite(LED, LOW); // Loop mode off
 
-      int b1_state = digitalRead(BUTTON1);
-      int b2_state = digitalRead(BUTTON2); 
-      int b3_state = digitalRead(BUTTON3);
-      int b4_state = digitalRead(BUTTON4);
-
-
-      for(int v = 0; v < 4, v++){
-        digitalWrite(valve[v], button_latched[v])
+      for(int v = 0; v < 4; v++){
+        digitalWrite(valves[v], button_latched[v]);
       }
+
+    get_button_states();
+    poll_buttons();
     
 
 }
