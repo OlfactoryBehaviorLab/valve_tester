@@ -56,6 +56,48 @@ void loop() {
 
 }
 
+void get_button_states(){
+  for(int i = 0; i < 4; i++){
+
+    int button_pin = buttons[i];
+    int current_pin_state = digitalRead(button_pin);
+    int prev_pin_state = pin_states[i];
+
+    if (current_pin_state != prev_pin_state) { // Check whether the button has been pushed
+      db_starts[i] = millis(); // Note debounce start time
+      pin_states[i] = !prev_pin_state; // The last known state is now its inverse
+    }
+    if (millis() - db_starts[i] > DEBOUNCE_TIME_MS) // Debounce timer elapsed
+      button_states[i] = pin_states[i];
+  }
+}
+
+void poll_buttons(){
+
+  for(int i = 0; i < 4; i++){
+    int button_state = button_states[i];
+    int prev_button_state = prev_button_states[i];
+
+    if (button_state != prev_button_state && button_state == HIGH){
+        int latch_state = button_latched[i];
+
+        if(!latch_state){
+          button_latched[i] = 1;
+          digitalWrite(valves[i], HIGH);
+        }
+        else{
+          button_latched[i] = 0;
+          digitalWrite(valves[i], LOW);
+        }
+
+
+    }
+
+    prev_button_states[i] = button_state;
+  }
+
+}
+
 void pulse_valve(int valve, int time) {
   digitalWrite(valve, HIGH);
   delay(time);
