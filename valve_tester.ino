@@ -104,8 +104,3 @@ void pulse_valve(int valve, int time) {
   digitalWrite(valve, LOW);
   delay(time);
 }
-
-void debounce_button(int button_num) {
-
-
-}
