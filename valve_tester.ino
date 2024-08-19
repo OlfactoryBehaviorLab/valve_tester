@@ -37,6 +37,9 @@ void setup() {
 void loop() {
 
   while(digitalRead(SWITCH1) == HIGH) {
+
+      reset_all(); // If we enter into loop mode, reset all values and turn off valves
+
       digitalWrite(LED, HIGH); // Loop mode on
       for(int i = 0; i < 4; i++) {
 
@@ -98,9 +101,20 @@ void set_outputs(){
 
 }
 
-void pulse_valve(int valve, int time) {
-  digitalWrite(valve, HIGH);
-  delay(time);
-  digitalWrite(valve, LOW);
-  delay(time);
+void pulse_valve(int valve, int on_time, int off_time) {
+  digitalWrite(valve, HIGH); // Turn valve on
+  delay(on_time); // Wait on_time
+  digitalWrite(valve, LOW); // Turn valve off
+  delay(off_time); // Wait off_time
+}
+
+void reset_all(){
+  for (int i = 0; i < 4; i++){
+    button_latched[i] = 0;
+    prev_pin_states[i] = 0;
+    button_states[i] = 0;
+    prev_button_states[i] = 0;
+    db_starts[i] = 0;
+    digitalWrite(valves[i], LOW);
+  }
 }
