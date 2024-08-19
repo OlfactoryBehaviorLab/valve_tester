@@ -12,8 +12,9 @@ This repository hosts the code and PCB design files for a small, simple PCB to a
 
 ## Manufacturing
 
-- All boards were manufactured by JLCPCB with no special board parameters. Gerber files, the KiCAD Project, and BOM/Coordinate files are all included in the repository
-- JLCPCB also partially assembed the board by placing small SMD components such as resistors, capacitors, LEDs, and diodes.
+- All boards were manufactured by JLCPCB with no special board parameters. Gerber files, and BOM/Coordinate files are all included in the [repository](Manufacturing)
+  - JLCPCB also partially assembed the board by placing small SMD components such as resistors, capacitors, LEDs, and diodes.
+- The schematic, PCB, and KiCAD project are all included in the repository [repository](KiCad_Project)
 - All other parts were purchased from DigiKey and hand assembled in the FSU Psychology Research Development shop.
 
 ## Programming Requirements
