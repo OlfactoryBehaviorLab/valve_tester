@@ -1,27 +1,29 @@
 // Dewan Lab Valve Tester
 // Teensy 2.0 sketch to power the Dewan Lab solenoid valve tester
 // Austin Pauley, Dewan Lab, Florida State University, 2024
-// v2.0
+// v2.1
 
 // Configurables
-const int VALVE_PULSE_ON_TIME_MS = 5000; // Time in ms that the valves will stay on in 'loop' mode
-const int VALVE_PULSE_OFF_TIME_MS = 1000; // Inter valve interval
+const uint32_t VALVE_PULSE_ON_TIME_MS = 5000; // Time in ms that the valves will stay on in 'loop' mode
+const uint32_t VALVE_PULSE_OFF_TIME_MS = 1000; // Inter valve interval
+const uint32_t TIMEOUT_TIME_MS = 120000; // After this amount of time of no actions, shutoff all valves
 
 // Don't touch anything below
-const int DEBOUNCE_TIME_MS = 15;
-const int LED = 11;
-const int SWITCH1 = 4;
-const int buttons[4] = {3, 2, 1, 0};
-const int valves[4] = {8, 7, 6, 5};
+const uint8_t DEBOUNCE_TIME_MS = 15;
+const uint8_t LED = 11;
+const uint8_t SWITCH1 = 4;
+const uint8_t buttons[4] = {3, 2, 1, 0};
+const uint8_t valves[4] = {8, 7, 6, 5};
 
+uint8_t switch_state = 0;
+uint8_t prev_pin_states[4] = {0, 0 , 0, 0};
+uint8_t button_states[4] = {0, 0, 0, 0};
+uint8_t prev_button_states[4] = {0, 0, 0, 0};
+uint8_t button_latched[4] = {0, 0, 0, 0};
+uint32_t db_starts[4] = {0, 0, 0, 0};
 
-int switch_state = 0;
-uint16_t prev_pin_states[4] = {0, 0 , 0, 0};
-int button_states[4] = {0, 0, 0, 0};
-int prev_button_states[4] = {0, 0, 0, 0};
-int button_latched[4] = {0, 0, 0, 0};
-uint16_t db_starts[4] = {0, 0, 0, 0};
-
+// Timer Stuff
+elapsedMillis since_change;
 
 
 void setup() {
@@ -51,11 +53,17 @@ void loop() {
       }     
     }
 
-    digitalWrite(LED, LOW); // Loop mode off
+  digitalWrite(LED, LOW); // Loop mode off
 
-    get_button_states(); // Get the 'actual' state of all the buttons
-    set_outputs(); // Latch outputs based on states of buttons
+  if (since_change >= TIMEOUT_TIME_MS)
+  {
+    reset_all();
+    since_change = 0;
+  }
 
+  get_button_states(); // Get the 'actual' state of all the buttons
+  set_outputs(); // Latch outputs based on states of buttons
+  
 }
 
 void get_button_states(){
@@ -89,6 +97,7 @@ void set_outputs(){
         if(!latch_state){  // If it isn't latched, latch it
           button_latched[i] = 1;
           digitalWrite(valves[i], HIGH);
+          since_change = 0;
         }
         else{ // If it is latched, unlatch it
           button_latched[i] = 0;
